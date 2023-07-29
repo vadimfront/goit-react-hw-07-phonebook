@@ -20,6 +20,7 @@ export const PhoneBookFilter = () => {
           id="filter"
           placeholder="Find contacts by name"
           onChange={handleFilter}
+          autoComplete="off"
         />
         <Label htmlFor="filter">Find contacts by name</Label>
       </FieldGroup>

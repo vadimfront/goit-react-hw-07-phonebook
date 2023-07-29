@@ -7,39 +7,47 @@ import {
   FieldGroup,
   FormBook,
   Label,
+  ErrorMessageText,
 } from './PhoneBookForm.styled';
 import { nameRegExp, phoneRegExp } from 'components/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkIfContactExists } from 'utils/phoneBookUtils';
-import { getContacts } from 'reducer/selectors';
-import { addContact } from 'reducer/contactsSlice';
+import { selectAllContacts } from 'reducer/selectors';
+import { createNewContact } from 'reducer/operations';
+import { nanoid } from 'nanoid';
 
 const PhoneBookForm = () => {
-  const contacts = useSelector(getContacts);
+  const { contacts, isLoading, error } = useSelector(selectAllContacts);
   const dispatch = useDispatch();
 
   const initialValues = {
-    name: '',
-    number: '',
+    contactName: '',
+    phoneNamber: '',
   };
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string()
+    contactName: Yup.string()
       .matches(nameRegExp, 'Invalid name')
       .required('Name is required'),
-    number: Yup.string()
+    phoneNamber: Yup.string()
       .matches(phoneRegExp, 'Invalid phone number')
       .required('Phone number is required'),
   });
 
-  const handleSubmit = ({ name, number }, { resetForm }) => {
-    console.log(name, contacts);
-    const checkResult = checkIfContactExists(contacts, name);
+  const handleSubmit = ({ contactName, phoneNamber }, { resetForm }) => {
+    const checkResult =
+      contacts.length > 0 && checkIfContactExists(contacts, contactName);
     if (checkResult) {
-      alert(`${name} is already in contacts.`);
+      alert(`${contactName} is already in contacts.`);
       return;
     }
-    dispatch(addContact({ name, number }));
+    const newContact = {
+      id: nanoid(),
+      contactName: contactName,
+      phoneNamber: phoneNamber,
+    };
+
+    dispatch(createNewContact({ ...newContact }));
     resetForm({ values: initialValues });
   };
 
@@ -54,22 +62,24 @@ const PhoneBookForm = () => {
           <StyledFormikField
             type="text"
             id="phone_book__name"
-            name="name"
+            name="contactName"
             placeholder="Name"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+            autoComplete="off"
           />
-          <ErrorMessage name="name" component="div" />
+          <ErrorMessage name="contactName" component={ErrorMessageText} />
           <Label htmlFor="phone_book__name">Name</Label>
         </FieldGroup>
         <FieldGroup>
           <StyledFormikField
             type="tel"
             id="phone_book__number"
-            name="number"
+            name="phoneNamber"
             placeholder="Number"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+            autoComplete="off"
           />
-          <ErrorMessage name="number" component="div" />
+          <ErrorMessage name="phoneNamber" component={ErrorMessageText} />
 
           <Label htmlFor="phone_book__number">Number</Label>
         </FieldGroup>

@@ -9,10 +9,10 @@ export const Filter = styled.div`
 export const Field = styled.input`
   width: 100%;
   border: none;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #fff;
   outline: 0;
   font-size: 17px;
-  color: #000;
+  color: #fff;
   padding: 7px 10px;
   background: transparent;
   transition: border-color 0.2s;

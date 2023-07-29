@@ -1,4 +1,4 @@
-import { Field, Form } from 'formik';
+import { ErrorMessage, Field, Form } from 'formik';
 import styled from '@emotion/styled';
 
 export const FormBook = styled(Form)`
@@ -17,10 +17,10 @@ export const FieldGroup = styled.div`
 export const StyledFormikField = styled(Field)`
   width: 100%;
   border: none;
-  border-bottom: 2px solid #000;
+  border-bottom: 2px solid #fff;
   outline: 0;
   font-size: 17px;
-  color: #000;
+  color: #fff;
   padding: 7px 10px;
   background: transparent;
   transition: border-color 0.2s;
@@ -56,7 +56,7 @@ export const Label = styled.label`
   display: block;
   transition: 0.2s;
   font-size: 17px;
-  color: #000;
+  color: #fff;
   pointer-events: none;
 `;
 
@@ -73,4 +73,13 @@ export const Button = styled.button`
   &:focus {
     background-color: #256ed3;
   }
+`;
+
+export const ErrorMessageText = styled.div`
+  padding: 10px;
+  background-color: #c70c0c;
+  margin-top: 10px;
+  color: #fff;
+  border-radius: 10px;
+  width: 100%;
 `;

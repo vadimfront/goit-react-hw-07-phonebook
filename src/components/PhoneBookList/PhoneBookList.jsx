@@ -1,33 +1,52 @@
-import React from 'react';
-import { List, ListItem } from './PhoneBookList.styed';
+import React, { useEffect } from 'react';
+import {
+  BtnDelete,
+  ContactName,
+  ContactNumber,
+  List,
+  ListItem,
+  NotFound,
+} from './PhoneBookList.styed';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts, getFilterContactsTerm } from 'reducer/selectors';
-import { Button } from 'components/PhoneBookForm/PhoneBookForm.styled';
-import { contactsFilter } from 'utils/phoneBookUtils';
-import { deleteContact } from 'reducer/contactsSlice';
+import { selectFilterByName, selectFilteredContacts } from 'reducer/selectors';
+import { deleteContact, fetchAll } from 'reducer/operations';
+import Spinner from 'components/Spinner/Spinner';
+import { ReactComponent as IconDelete } from '../../assets/svg/iconDelete.svg';
 
 export const PhoneBookList = () => {
-  const contacts = useSelector(getContacts);
-  const filterContactsTerm = useSelector(getFilterContactsTerm);
+  const { contacts, isLoading, error } = useSelector(selectFilteredContacts);
+  const filterTerm = useSelector(selectFilterByName);
+
   const dispatch = useDispatch();
-  const handleDelete = id => dispatch(deleteContact(id));
-  const filteredContacts = contactsFilter(contacts, filterContactsTerm);
+
+  useEffect(() => {
+    dispatch(fetchAll());
+  }, [dispatch]);
+
+  const delContactHandler = id => {
+    dispatch(deleteContact(id));
+  };
 
   return (
     <>
-      {filteredContacts.length > 0 && (
+      {isLoading && <Spinner />}
+      {error && error}
+      {!(isLoading && error) && contacts.length > 0 && (
         <List>
-          {filteredContacts.map(({ name, number, id }) => (
+          {contacts.map(({ contactName, phoneNamber, id }) => (
             <ListItem key={id}>
-              {name}: {number}
-              <Button size="small" onClick={() => handleDelete(id)}>
-                Delete
-              </Button>
+              <ContactName>{contactName}</ContactName>
+              <ContactNumber>{phoneNamber}</ContactNumber>
+              <BtnDelete size="small" onClick={() => delContactHandler(id)}>
+                <IconDelete />
+              </BtnDelete>
             </ListItem>
           ))}
         </List>
       )}
-      {!filteredContacts.length && contacts.length > 0 && 'There is no matches'}
+      {!contacts.length && filterTerm.length && (
+        <NotFound>There is no matches</NotFound>
+      )}
     </>
   );
 };

@@ -1,32 +1,51 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { nanoid } from 'nanoid';
-
-const contactsInitialState = [];
+import { fetchAll, createNewContact, deleteContact } from './operations';
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: contactsInitialState,
-  reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.push(action.payload);
-      },
-      prepare({ name, number }) {
-        return {
-          payload: {
-            id: nanoid(),
-            name: name,
-            number: number,
-          },
-        };
-      },
+  initialState: {
+    contacts: [],
+    isLoading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: {
+    [fetchAll.pending](state) {
+      state.isLoading = true;
     },
-    deleteContact(state, action) {
-      const index = state.findIndex(contact => contact.id === action.payload);
-      state.splice(index, 1);
+    [fetchAll.fulfilled](state, action) {
+      state.isLoading = false;
+      state.contacts = action.payload;
+    },
+    [fetchAll.rejected](state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    [createNewContact.pending](state) {
+      state.isLoading = true;
+    },
+    [createNewContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.contacts.push(action.payload);
+    },
+    [createNewContact.rejected](state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    [deleteContact.pending](state) {
+      state.isLoading = true;
+    },
+    [deleteContact.fulfilled](state, action) {
+      state.isLoading = false;
+      state.contacts = state.contacts.filter(
+        contact => contact.id !== action.payload
+      );
+    },
+    [deleteContact.rejected](state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
     },
   },
 });
 
-export const { addContact, deleteContact } = contactsSlice.actions;
 export const contactsReducer = contactsSlice.reducer;
