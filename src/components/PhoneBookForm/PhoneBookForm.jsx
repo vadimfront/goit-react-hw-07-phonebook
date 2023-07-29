@@ -17,7 +17,7 @@ import { createNewContact } from 'reducer/operations';
 import { nanoid } from 'nanoid';
 
 const PhoneBookForm = () => {
-  const { contacts, isLoading, error } = useSelector(selectAllContacts);
+  const { contacts } = useSelector(selectAllContacts);
   const dispatch = useDispatch();
 
   const initialValues = {
